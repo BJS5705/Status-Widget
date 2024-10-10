@@ -19,83 +19,71 @@
 
 <script>
     async function fetchSteamStatus() {
-        const apiKey = '8B003B5D78AC09470503063713080EB0';
-        const steamId = '76561198055079301';
-        const proxies = [
-            'https://cors-anywhere.herokuapp.com/',
-            'https://thingproxy.freeboard.io/fetch/',
-            'https://cors.io/',
-            'https://corsproxy.io/'
-        ];
+        const url = '/api/fetchSteamStatus'; // Vercel의 Serverless Function URL
 
-        for (const proxy of proxies) {
-            const url = `${proxy}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`;
-            try {
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                const player = data.response.players[0];
-                const personastate = player.personastate;
-                const gameExtraInfo = player.gameextrainfo; // 현재 게임 정보
-
-                let statusText = '';
-                let statusColor = 'white';
-                let gameInfoText = '';
-
-                // 게임 중이면 게임 정보를 사용해 표시
-                if (gameExtraInfo) {
-                    statusText = '게임 중';
-                    statusColor = '#8EBF56'; // 게임 중 색상
-                    gameInfoText = gameExtraInfo; // 게임 이름 표시
-                } else {
-                    // personastate에 따라 상태 결정
-                    switch(personastate) {
-                        case 0:
-                            statusText = '오프라인';
-                            break;
-                        case 1:
-                            statusText = '온라인';
-                            statusColor = '#6BCAF1'; // 온라인 색상
-                            break;
-                        case 2:
-                            statusText = '바쁨';
-                            statusColor = '#6BCAF1'; // 바쁨 색상
-                            break;
-                        case 3:
-                            statusText = '자리 비움';
-                            statusColor = '#6BCAF1'; // 자리 비움 색상
-                            break;
-                        case 4:
-                            statusText = '잠수';
-                            statusColor = '#6BCAF1'; // 잠수 색상
-                            break;
-                        case 5:
-                            statusText = '교환 찾는 중';
-                            break;
-                        case 6:
-                            statusText = '게임 찾는 중';
-                            break;
-                        default:
-                            statusText = '상태를 알 수 없음';
-                    }
-                }
-
-                // 상태 표시
-                const statusElement = document.getElementById('steam-status');
-                statusElement.innerHTML = statusText + (gameInfoText ? `<br><span style="font-size: 0.8em; color: ${statusColor};">${gameInfoText}</span>` : '');
-                statusElement.style.color = statusColor;
-                statusElement.style.fontWeight = gameExtraInfo || personastate === 1 ? 'bold' : 'normal';
-
-                // 요청 성공 시 루프 종료
-                break;
-            } catch (error) {
-                console.error('Error fetching Steam status:', error);
-                document.getElementById('steam-status').innerText = '상태를 불러오지 못했습니다.';
+        try {
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
             }
+
+            const data = await response.json();
+            const player = data.response.players[0];
+            const personastate = player.personastate;
+            const gameExtraInfo = player.gameextrainfo; // 현재 게임 정보
+
+            let statusText = '';
+            let statusColor = 'white';
+            let gameInfoText = '';
+
+            // 게임 중이면 게임 정보를 사용해 표시
+            if (gameExtraInfo) {
+                statusText = '게임 중';
+                statusColor = '#8EBF56'; // 게임 중 색상
+                gameInfoText = gameExtraInfo; // 게임 이름 표시
+            } else {
+                // personastate에 따라 상태 결정
+                switch(personastate) {
+                    case 0:
+                        statusText = '오프라인';
+                        break;
+                    case 1:
+                        statusText = '온라인';
+                        statusColor = '#6BCAF1'; // 온라인 색상
+                        break;
+                    case 2:
+                        statusText = '바쁨';
+                        statusColor = '#6BCAF1'; // 바쁨 색상
+                        break;
+                    case 3:
+                        statusText = '자리 비움';
+                        statusColor = '#6BCAF1'; // 자리 비움 색상
+                        break;
+                    case 4:
+                        statusText = '잠수';
+                        statusColor = '#6BCAF1'; // 잠수 색상
+                        break;
+                    case 5:
+                        statusText = '교환 찾는 중';
+                        break;
+                    case 6:
+                        statusText = '게임 찾는 중';
+                        break;
+                    default:
+                        statusText = '상태를 알 수 없음';
+                }
+            }
+
+            // 상태 표시
+            const statusElement = document.getElementById('steam-status');
+            statusElement.innerHTML = statusText + (gameInfoText ? `<br><span style="font-size: 0.8em; color: ${statusColor};">${gameInfoText}</span>` : '');
+            statusElement.style.color = statusColor;
+            statusElement.style.fontWeight = gameExtraInfo || personastate === 1 ? 'bold' : 'normal';
+
+        } catch (error) {
+            console.error('Error fetching Steam status:', error);
+            document.getElementById('steam-status').innerText = '상태를 불러오지 못했습니다.';
         }
     }
 
