@@ -90,7 +90,11 @@
 
             // 상태 표시
             const statusElement = document.getElementById('steam-status');
-            statusElement.innerHTML = statusText + (gameInfoText ? ` <span style="font-size: 0.8em; color: #CCCCCC;">(${gameInfoText})</span>` : '');
+            statusElement.innerHTML = statusText;
+            if (gameExtraInfo) {
+                // 게임 이름도 같은 색으로 표시, 크기를 0.8em으로
+                statusElement.innerHTML += ` <span style="font-size: 0.8em; color: ${statusColor}; font-weight: bold;">${gameExtraInfo}</span>`;
+            }
             statusElement.style.color = statusColor;
             statusElement.style.fontWeight = gameExtraInfo || personastate === 1 ? 'bold' : 'normal';
 
