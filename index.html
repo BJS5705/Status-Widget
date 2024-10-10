@@ -18,14 +18,25 @@
 </table>
 
 <script>
+    let lastFetchTime = 0; // 마지막 요청 시간
+    const fetchInterval = 60000; // 1분 (60초 * 1000ms)
+
     async function fetchSteamStatus() {
         const apiKey = '8B003B5D78AC09470503063713080EB0';
         const steamId = '76561198055079301';
         const url = `https://cors-anywhere.herokuapp.com/https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`;
+        
+        const currentTime = new Date().getTime();
+
+        // 마지막 요청이 1분 이내인지 확인
+        if (currentTime - lastFetchTime < fetchInterval) {
+            // 이전 데이터 표시
+            console.log('최근 요청 데이터 사용');
+            return; // 요청하지 않고 종료
+        }
 
         try {
             const response = await fetch(url);
-            
             if (!response.ok) {
                 throw new Error(`Error: ${response.status} ${response.statusText}`);
             }
@@ -79,19 +90,19 @@
 
             // 상태 표시
             const statusElement = document.getElementById('steam-status');
-            // 게임 중일 때 게임 이름을 오른쪽에 표시
-            if (gameInfoText) {
-                statusElement.innerHTML = `${statusText} <span style="font-size: 0.8em; color: ${statusColor};">${gameInfoText}</span>`;
-            } else {
-                statusElement.innerHTML = statusText;
-            }
+            statusElement.innerHTML = statusText + (gameInfoText ? `<br><span style="font-size: 0.5em;">${gameInfoText}</span>` : '');
             statusElement.style.color = statusColor;
             statusElement.style.fontWeight = gameExtraInfo || personastate === 1 ? 'bold' : 'normal';
+
+            // 마지막 요청 시간 업데이트
+            lastFetchTime = currentTime;
+
         } catch (error) {
             console.error('Error fetching Steam status:', error);
             document.getElementById('steam-status').innerText = '상태를 불러오지 못했습니다.';
         }
     }
 
+    // 페이지 로드 시 상태를 가져오기
     fetchSteamStatus();
 </script>
