@@ -18,53 +18,30 @@
 </table>
 
 <script>
-    let lastFetchTime = 0;
-    const fetchInterval = 60 * 1000; // 1분
-    const proxies = [
-        'https://thingproxy.freeboard.io/fetch/',
-        'https://cors-anywhere.herokuapp.com/',
-        'https://cors.bridged.cc/' // 다른 CORS 프록시 예시
-    ];
-    const apiKey = '8B003B5D78AC09470503063713080EB0';
-    const steamId = '76561198055079301';
-    let currentProxyIndex = 0;
+    let lastFetchTime = 0; // 마지막 요청 시간
+    const fetchInterval = 60000; // 1분 (60초 * 1000ms)
 
     async function fetchSteamStatus() {
-        const currentTime = Date.now();
+        const apiKey = '8B003B5D78AC09470503063713080EB0';
+        const steamId = '76561198055079301';
+        const url = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`;
         
+        const currentTime = new Date().getTime();
+
+        // 마지막 요청이 1분 이내인지 확인
         if (currentTime - lastFetchTime < fetchInterval) {
-            console.log('API 요청을 너무 자주 합니다. 이전 요청을 사용합니다.');
-            return; // 이전 요청 사용
+            // 이전 데이터 표시
+            console.log('최근 요청 데이터 사용');
+            return; // 요청하지 않고 종료
         }
-        
-        lastFetchTime = currentTime; // 현재 시간 기록
 
-        const fetchFromProxy = async (proxy) => {
-            const url = `${proxy}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`;
-            try {
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                return data; // 데이터를 반환
-            } catch (error) {
-                console.error(`Error fetching Steam status from ${proxy}:`, error);
-                return null; // 실패시 null 반환
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
             }
-        };
 
-        let data = null;
-
-        while (currentProxyIndex < proxies.length && data === null) {
-            data = await fetchFromProxy(proxies[currentProxyIndex]);
-            currentProxyIndex++; // 다음 프록시로 이동
-        }
-
-        if (data) {
-            // API 호출 성공 시 데이터 처리
+            const data = await response.json();
             const player = data.response.players[0];
             const personastate = player.personastate;
             const gameExtraInfo = player.gameextrainfo; // 현재 게임 정보
@@ -113,13 +90,26 @@
 
             // 상태 표시
             const statusElement = document.getElementById('steam-status');
-            statusElement.innerHTML = statusText + (gameInfoText ? `<span style="font-size: 0.8em; color: ${statusColor};"> ${gameInfoText}</span>` : '');
+            statusElement.innerHTML = statusText;
+            if (gameExtraInfo) {
+                // 게임 이름도 같은 색으로 표시, 크기를 0.8em으로
+                statusElement.innerHTML += ` <span style="font-size: 0.8em; color: ${statusColor}; font-weight: bold;">${gameExtraInfo}</span>`;
+            }
             statusElement.style.color = statusColor;
             statusElement.style.fontWeight = gameExtraInfo || personastate === 1 ? 'bold' : 'normal';
-        } else {
-            document.getElementById('steam-status').innerText = '추후 다시 시도 바람';
+
+            // 마지막 요청 시간 업데이트
+            lastFetchTime = currentTime;
+
+        } catch (error) {
+            console.error('Error fetching Steam status:', error);
+            document.getElementById('steam-status').innerText = 'API 프록시 요청 초과';
         }
     }
+
+    // 페이지 로드 시 상태를 가져오기
+    fetchSteamStatus();
+</script>
 
     fetchSteamStatus();
 </script>
