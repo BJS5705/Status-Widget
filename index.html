@@ -90,7 +90,7 @@
 
             // 상태 표시
             const statusElement = document.getElementById('steam-status');
-            statusElement.innerHTML = statusText + (gameInfoText ? `<br><span style="font-size: 0.5em;">${gameInfoText}</span>` : '');
+            statusElement.innerHTML = statusText + (gameInfoText ? ` <span style="font-size: 0.8em; color: #CCCCCC;">(${gameInfoText})</span>` : '');
             statusElement.style.color = statusColor;
             statusElement.style.fontWeight = gameExtraInfo || personastate === 1 ? 'bold' : 'normal';
 
