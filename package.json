@@ -4,11 +4,13 @@
   "description": "더 좋은 디자인이 있다면 추천 바랍니다. 네이버 블로그 위젯을 기반으로 만들었기에 가로 170px 세로 600px 내에서만 가능합니다.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node api/discordStatus.js"  // Discord 봇을 실행하기 위한 스크립트 추가
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "discord.js": "^14.0.0"  // Discord.js 패키지 추가
   }
 }
