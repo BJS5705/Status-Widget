@@ -5,6 +5,7 @@ export default async (req, res) => {
     const USER_ID = '332383283470139393'; // 확인할 Discord 사용자 ID
 
     try {
+        // 사용자 정보를 가져오기
         const response = await fetch(`https://discord.com/api/v10/users/${USER_ID}`, {
             method: 'GET',
             headers: {
@@ -14,10 +15,10 @@ export default async (req, res) => {
         });
 
         if (!response.ok) {
-            throw new Error('Error fetching Discord status');
+            throw new Error('Error fetching Discord user info');
         }
 
-        const data = await response.json();
+        // 사용자의 상태 정보 가져오기
         const presenceResponse = await fetch(`https://discord.com/api/v10/users/${USER_ID}/presence`, {
             method: 'GET',
             headers: {
@@ -26,8 +27,27 @@ export default async (req, res) => {
             }
         });
 
+        if (!presenceResponse.ok) {
+            throw new Error('Error fetching Discord presence');
+        }
+
         const presenceData = await presenceResponse.json();
         const onlineStatus = presenceData.status; // "online", "idle", "dnd", "offline"
+
+        // Vercel API로 상태 전송
+        const vercelApiUrl = 'YOUR_VERCEL_API_URL'; // Vercel API URL로 변경하세요.
+        
+        const apiResponse = await fetch(vercelApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: onlineStatus })
+        });
+
+        if (!apiResponse.ok) {
+            throw new Error('Error sending status to Vercel API');
+        }
 
         res.status(200).json({ status: onlineStatus });
     } catch (error) {
