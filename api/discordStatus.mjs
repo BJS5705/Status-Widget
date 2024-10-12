@@ -1,11 +1,10 @@
 // discordStatus.mjs
-import fetch from 'node-fetch'; // ES 모듈 방식으로 import
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // 환경 변수에서 Discord 토큰 가져오기
-const USER_ID = '332383283470139393'; // 확인할 Discord 사용자 ID
-
 export default async (req, res) => {
+    const fetch = (await import('node-fetch')).default; // 동적 import 사용
+    const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // 환경 변수에서 Discord 토큰 가져오기
+    const USER_ID = '332383283470139393'; // 확인할 Discord 사용자 ID
+
     try {
-        // 사용자 상태 확인
         const presenceResponse = await fetch(`https://discord.com/api/v10/users/${USER_ID}/presence`, {
             method: 'GET',
             headers: {
@@ -14,8 +13,12 @@ export default async (req, res) => {
             }
         });
 
+        // 응답 상태 코드 로그
+        console.log(`Response status: ${presenceResponse.status}`);
+
         if (!presenceResponse.ok) {
-            throw new Error('Error fetching Discord presence');
+            const errorText = await presenceResponse.text(); // 에러 메시지 로깅
+            throw new Error(`Error fetching Discord presence: ${errorText}`);
         }
 
         const presenceData = await presenceResponse.json();
