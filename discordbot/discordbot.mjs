@@ -1,7 +1,7 @@
 "use strict";
 
 import { Client, GatewayIntentBits } from 'discord.js';
-import fetch from 'node-fetch';
+import fetch from 'node-fetch'; // node-fetch를 ES 모듈 형식으로 가져옵니다.
 
 const client = new Client({ 
     intents: [ 
@@ -19,14 +19,20 @@ client.once('ready', () => {
 // 상태를 가져오는 함수
 async function getUserStatus(userId) {
     try {
-        const response = await fetch(`https://discord.com/api/v10/users/${userId}`, {
+        const response = await fetch(`https://discord.com/api/v10/users/${userId}/presence`, {
             headers: {
-                'Authorization': `Bot ${process.env.DISCORD_TOKEN}`, // 환경 변수에서 가져오기
+                'Authorization': `Bot ${process.env.DISCORD_TOKEN}`, // 환경 변수에서 봇 토큰 가져오기
             },
         });
+
+        // 응답 상태 코드 로그
+        console.log(`Response status: ${response.status}`);
+
         if (!response.ok) {
-            throw new Error('Error fetching user status');
+            const errorText = await response.text(); // 에러 메시지 로깅
+            throw new Error(`Error fetching user status: ${errorText}`);
         }
+        
         const userData = await response.json();
         return userData;
     } catch (error) {
@@ -50,4 +56,4 @@ client.on('messageCreate', async (message) => {
 });
 
 // 봇 로그인
-client.login(process.env.DISCORD_TOKEN); // 환경 변수에서 가져오기
+client.login(process.env.DISCORD_TOKEN); // 환경 변수에서 Discord 토큰 가져오기
