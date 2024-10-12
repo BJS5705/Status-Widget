@@ -10,10 +10,10 @@ export default async (req, res) => {
 
     try {
         // 사용자 상태를 확인하기 위한 API 요청
-        const presenceResponse = await fetch(`https://discord.com/api/v10/users/${USER_ID}/presence`, {
+        const presenceResponse = await fetch(`https://discord.com/api/v{10}/users/${USER_ID}/presence`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bot ${DISCORD_TOKEN}`,
+                'Authorization': `Bot ${process.env.DISCORD_TOKEN}`,
                 'Content-Type': 'application/json'
             }
         });
