@@ -1,7 +1,15 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const fetch = require('node-fetch');
+"use strict";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+import { Client, GatewayIntentBits } from 'discord.js';
+import fetch from 'node-fetch'; // 변경된 부분
+
+const client = new Client({ 
+    intents: [ 
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMessages, 
+        GatewayIntentBits.MessageContent 
+    ] 
+});
 
 // 봇이 준비되었을 때 실행
 client.once('ready', () => {
@@ -13,7 +21,7 @@ async function getUserStatus(userId) {
     try {
         const response = await fetch(`https://discord.com/api/v10/users/${userId}`, {
             headers: {
-                'Authorization': `Bot ${client.token}`,
+                'Authorization': `Bot YOUR_ACTUAL_TOKEN_HERE`, // 여기에 실제 봇 토큰을 넣으세요.
             },
         });
         if (!response.ok) {
@@ -42,4 +50,4 @@ client.on('messageCreate', async (message) => {
 });
 
 // 봇 로그인
-client.login(process.env.DISCORD_BOT_TOKEN); // 여기에 봇 토큰을 입력하세요.
+client.login(process.env.DISCORD_BOT_TOKEN); // 여기에 실제 봇 토큰을 입력하세요.
