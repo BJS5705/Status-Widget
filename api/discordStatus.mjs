@@ -1,9 +1,9 @@
-// discordStatus.js
-export default async (req, res) => {
-    const fetch = (await import('node-fetch')).default; // 동적 import 사용
-    const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // 환경 변수에서 Discord 토큰 가져오기
-    const USER_ID = '332383283470139393'; // 확인할 Discord 사용자 ID
+// discordStatus.mjs
+import fetch from 'node-fetch'; // ES 모듈 방식으로 import
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // 환경 변수에서 Discord 토큰 가져오기
+const USER_ID = '332383283470139393'; // 확인할 Discord 사용자 ID
 
+export default async (req, res) => {
     try {
         // 사용자 상태 확인
         const presenceResponse = await fetch(`https://discord.com/api/v10/users/${USER_ID}/presence`, {
