@@ -1,7 +1,7 @@
 "use strict";
 
 import { Client, GatewayIntentBits } from 'discord.js';
-import fetch from 'node-fetch'; // 변경된 부분
+import fetch from 'node-fetch';
 
 const client = new Client({ 
     intents: [ 
@@ -21,7 +21,7 @@ async function getUserStatus(userId) {
     try {
         const response = await fetch(`https://discord.com/api/v10/users/${userId}`, {
             headers: {
-                'Authorization': `Bot YOUR_ACTUAL_TOKEN_HERE`, // 여기에 실제 봇 토큰을 넣으세요.
+                'Authorization': `Bot ${process.env.DISCORD_TOKEN}`, // 환경 변수에서 가져오기
             },
         });
         if (!response.ok) {
@@ -50,4 +50,4 @@ client.on('messageCreate', async (message) => {
 });
 
 // 봇 로그인
-client.login(process.env.DISCORD_BOT_TOKEN); // 여기에 실제 봇 토큰을 입력하세요.
+client.login(process.env.DISCORD_TOKEN); // 환경 변수에서 가져오기
