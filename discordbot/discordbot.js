@@ -42,4 +42,4 @@ client.on('messageCreate', async (message) => {
 });
 
 // 봇 로그인
-client.login('process.env.DISCORD_BOT_TOKEN'); // 여기에 봇 토큰을 입력하세요.
+client.login(process.env.DISCORD_BOT_TOKEN); // 여기에 봇 토큰을 입력하세요.
