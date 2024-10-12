@@ -1,0 +1,12 @@
+{
+  "name": "my-discord-bot",
+  "version": "1.0.0",
+  "main": "api/discordStatus.js",
+  "scripts": {
+    "start": "node api/discordStatus.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.0.0",
+    "node-fetch": "^2.6.1" // 또는 버전에 맞는 node-fetch
+  }
+}
