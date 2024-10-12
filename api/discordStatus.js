@@ -15,6 +15,8 @@ export default async (req, res) => {
         });
 
         if (!presenceResponse.ok) {
+            const errorMessage = await presenceResponse.text(); // 추가: 응답 본문을 텍스트로 가져오기
+            console.error('Error fetching Discord presence:', errorMessage); // 오류 메시지 출력
             throw new Error('Error fetching Discord presence');
         }
 
@@ -23,7 +25,7 @@ export default async (req, res) => {
 
         res.status(200).json({ status: onlineStatus });
     } catch (error) {
-        console.error(error);
+        console.error('Error in discordStatus API:', error); // 수정: 보다 구체적인 오류 메시지 출력
         res.status(500).json({ error: 'Failed to fetch Discord status' });
     }
 };
