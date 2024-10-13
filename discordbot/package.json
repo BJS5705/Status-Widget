@@ -2,7 +2,7 @@
   "name": "discordbot",
   "version": "1.0.0",
   "main": "api/discordStatus.mjs",
-  "type": "module",  // ESM 모듈 사용을 명시
+  "type": "module",
   "scripts": {
     "start": "node api/discordStatus.mjs"
   },
@@ -11,6 +11,6 @@
     "node-fetch": "^3.3.2"
   },
   "engines": {
-    "node": ">=16.x"  // Node.js 버전을 명시
+    "node": ">=16.x"
   }
 }
