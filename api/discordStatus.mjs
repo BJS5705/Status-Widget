@@ -37,8 +37,9 @@ export default async (req, res) => {
     const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
     const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
 
+    // 봇이 준비된 경우에만 요청을 처리
     if (!client.isReady()) {
-        return res.status(503).json({ error: 'Bot is not ready' }); // 봇이 준비되지 않은 경우
+        return res.status(503).json({ error: 'Bot is not ready' });
     }
 
     try {
