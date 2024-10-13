@@ -11,6 +11,8 @@ const client = new Client({
     ] 
 });
 
+let botReady = false; // 봇 준비 상태를 추적하는 변수
+
 // 사용자 상태를 가져오는 함수
 async function getUserStatus(guildId, userId) {
     try {
@@ -42,7 +44,7 @@ export default async (req, res) => {
     console.log('Received request to fetch user status');
 
     // 봇이 준비된 경우에만 요청을 처리
-    if (!client.isReady()) {
+    if (!botReady) {
         console.log('Bot is not ready, returning 503');
         return res.status(503).json({ error: 'Bot is not ready' });
     }
@@ -72,4 +74,5 @@ client.login(process.env.DISCORD_TOKEN)
 
 client.once('ready', () => {
     console.log('Bot is ready!');
+    botReady = true; // 봇이 준비 상태로 변경
 });
