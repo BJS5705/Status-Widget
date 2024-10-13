@@ -11,6 +11,11 @@ const client = new Client({
     ] 
 });
 
+// 봇 준비 완료 시
+client.once('ready', () => {
+    console.log('Bot is online!');
+});
+
 // 사용자 상태를 가져오는 함수
 async function getUserStatus(guildId, userId) {
     try {
@@ -36,6 +41,11 @@ async function getUserStatus(guildId, userId) {
 export default async (req, res) => {
     const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
     const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
+
+    // 봇이 준비되었는지 확인
+    if (!client.isReady()) {
+        return res.status(503).json({ error: 'Bot is not ready' });
+    }
 
     try {
         const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
