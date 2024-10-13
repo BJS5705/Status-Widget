@@ -1,7 +1,6 @@
 <table style="background-color: #1F2127; width: 328px; border: solid #000000 1px; font-family: malgun gothic, Segoe UI, Helvetica, Arial, Sans-Serif;">
     <tbody>
         <tr>
-            <!-- 스팀 영역 -->
             <td colspan="2" style="padding: 7px; height: 120px; vertical-align: top;">
                 <div style="display: flex; align-items: flex-start; flex-direction: column;">
                     <img src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016" alt="Steam Logo" style="width: 120px; height: auto; margin-bottom: 8px;" />
@@ -19,11 +18,9 @@
             </td>
         </tr>
         <tr>
-            <!-- 구분선 -->
             <td colspan="2" style="border-top: solid 1px white; padding: 0;"></td>
         </tr>
         <tr>
-            <!-- 디스코드 영역 -->
             <td colspan="2" style="color: white; padding: 7px 0; text-align: left; height: 120px; vertical-align: top; overflow: auto;">
                 <div style="display: flex; align-items: flex-start; flex-direction: column;">
                     <img src="https://github.com/BJS5705/SteamCard2/blob/main/discordlogo.png?raw=true" alt="Discord Logo" style="width: 115px; height: auto; margin-bottom: 8px; margin-left: 5px;" />
@@ -39,13 +36,11 @@
             </td>
         </tr>
         <tr>
-            <!-- 구분선 추가 -->
             <td colspan="2" style="border-top: solid 1px white; padding: 0;"></td>
         </tr>
         <tr>
-            <!-- 버튼 영역 -->
             <td colspan="2" style="text-align: center; padding: 10px;">
-                <a href="https://discord.gg/9wcAJv5vPW" style="display: inline-block; background-color: #462456; color: white; text-decoration: none; padding: 15px 25px; border-radius: 10px; height: 50px; line-height: 50px; font-weight: bold; font-size: 20px; font-family: malgun gothic, Segoe UI, Helvetica, Arial, Sans-Serif;">
+                <a href="https://discord.gg/9wcAJv5vPW" class="button">
                     디스코드 채팅 문의(클릭)
                 </a>
             </td>
@@ -55,7 +50,7 @@
 
 <script>
     async function fetchSteamStatus() {
-        const url = '/api/fetchSteamStatus'; // Vercel의 Serverless Function URL
+        const url = '/api/fetchSteamStatus';
 
         try {
             const response = await fetch(url);
@@ -107,14 +102,13 @@
             statusElement.style.color = statusColor;
             statusElement.style.fontWeight = gameExtraInfo || personastate === 1 ? 'bold' : 'normal';
 
-            // 프로필 이미지 테두리 색상 변경
             const profileImage = document.getElementById('profile-image');
             if (gameExtraInfo) {
-                profileImage.style.borderColor = '#8EBF56'; // 게임 중 색상
+                profileImage.style.borderColor = '#8EBF56';
             } else if (personastate === 1) {
-                profileImage.style.borderColor = '#6BCAF1'; // 온라인 색상
+                profileImage.style.borderColor = '#6BCAF1';
             } else {
-                profileImage.style.borderColor = '#666666'; // 기본 회색
+                profileImage.style.borderColor = '#666666';
             }
 
         } catch (error) {
@@ -124,7 +118,7 @@
     }
 
     async function fetchDiscordStatus() {
-        const url = '/api/discordStatus'; // Vercel의 Discord 상태 확인 API URL
+        const url = '/api/discordStatus';
 
         try {
             const response = await fetch(url);
@@ -134,19 +128,17 @@
 
             const data = await response.json();
             const discordStatusElement = document.getElementById('discord-status');
-            const discordIndicator = document.getElementById('discord-status-indicator'); // 여기에서 ID를 가져옵니다.
+            const discordIndicator = document.getElementById('discord-status-indicator');
 
-            // status가 online인지 확인
             discordStatusElement.innerText = data.status === 'online' ? '온라인' : '오프라인';
 
-            // Discord 상태 표시를 위한 인디케이터 처리
-            if (discordIndicator) { // discordIndicator가 null이 아닐 때만 실행
-                discordIndicator.style.backgroundColor = data.status === 'online' ? 'green' : 'gray'; // 상태에 따라 색상 변경
+            if (discordIndicator) {
+                discordIndicator.style.backgroundColor = data.status === 'online' ? 'green' : 'gray';
             }
 
         } catch (error) {
             console.error('Error fetching Discord status:', error);
-            document.getElementById('discord-status').innerText = '확인실패';
+            document.getElementById('discord-status').innerText = '확인 실패';
         }
     }
 
@@ -155,20 +147,20 @@
 </script>
 
 <style>
-a {
+.button {
     display: inline-block;
-    background-color: purple; /* 기본 색상 */
+    background-color: #462456; /* 기본 색상 */
     color: white;
     text-decoration: none;
     padding: 15px 25px; /* 높이 조정 */
-    border-radius: 5px;
+    border-radius: 10px; /* 기존 값 유지 */
     height: 50px;
     line-height: 50px; /* 버튼 내부 텍스트 정렬 */
     transition: background-color 0.3s;
     font-weight: bold; /* 글씨 굵게 */
 }
 
-a:hover {
+.button:hover {
     background-color: #6A1B9A; /* 마우스 오버 시 색상 변경 */
 }
 </style>
