@@ -43,9 +43,18 @@ export default async (req, res) => {
 
     console.log('Received request to fetch user status');
 
-    // 봇이 준비된 경우에만 요청을 처리
+    // 봇이 준비되지 않은 경우 대기하고 최대 시도 횟수를 설정
+    const maxAttempts = 5;
+    let attempts = 0;
+
+    while (!botReady && attempts < maxAttempts) {
+        console.log('Bot is not ready, waiting for 1 second...');
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
+        attempts++;
+    }
+
     if (!botReady) {
-        console.log('Bot is not ready, returning 503');
+        console.log('Bot is still not ready after attempts, returning 503');
         return res.status(503).json({ error: 'Bot is not ready' });
     }
 
