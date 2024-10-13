@@ -4,15 +4,15 @@
             <!-- 스팀 영역 -->
             <td colspan="2" style="padding: 7px; height: 120px; vertical-align: top;">
                 <div style="display: flex; align-items: flex-start; flex-direction: column;">
-                    <img src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016" alt="Steam Logo" style="width: 120px; height: auto; margin-bottom: 8px;" /> <!-- 15% 증가 -->
+                    <img src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016" alt="Steam Logo" style="width: 120px; height: auto; margin-bottom: 8px;" />
                     <div style="display: flex; align-items: center;">
-                        <img id="profile-image" src="https://avatars.akamai.steamstatic.com/cb56471b6bbb734d48054000ceaba827e2776cf3_full.jpg" alt="Profile Image" style="width: 80px; height: 80px; border: solid 4px #666666; margin-right: 8px;" /> <!-- 15% 증가 -->
+                        <img id="profile-image" src="https://avatars.akamai.steamstatic.com/cb56471b6bbb734d48054000ceaba827e2776cf3_full.jpg" alt="Profile Image" style="width: 80px; height: 80px; border: solid 4px #666666; margin-right: 8px;" />
                         <div style="color: white;">
                             <div style="margin-bottom: 4px;">
-                                <b id="nickname" style="font-size: 30px;">HEAVEN</b> <!-- 15% 증가 -->
+                                <b id="nickname" style="font-size: 30px;">HEAVEN</b>
                             </div>
-                            <div id="steam-status" style="font-size: 25px; color: #CCCCCC;">확인 중...</div> <!-- 15% 증가 -->
-                            <div id="game-title" style="font-size: 13px; color: #8EBF56; display: none;">게임 제목</div> <!-- 15% 증가 -->
+                            <div id="steam-status" style="font-size: 25px; color: #CCCCCC;">확인 중...</div>
+                            <div id="game-title" style="font-size: 13px; color: #8EBF56; display: none;">게임 제목</div>
                         </div>
                     </div>
                 </div>
@@ -24,23 +24,34 @@
         </tr>
         <tr>
             <!-- 디스코드 영역 -->
-            <td colspan="2" style="color: white; padding: 7px 0; text-align: left; height: 160px; vertical-align: top; overflow: auto;">
+            <td colspan="2" style="color: white; padding: 7px 0; text-align: left; height: 120px; vertical-align: top; overflow: auto;">
                 <div style="display: flex; align-items: flex-start; flex-direction: column;">
-                    <img src="https://github.com/BJS5705/SteamCard2/blob/main/discordlogo.png?raw=true" alt="Discord Logo" style="width: 115px; height: auto; margin-bottom: 8px; margin-left: 5px;" /> <!-- 15% 증가 -->
+                    <img src="https://github.com/BJS5705/SteamCard2/blob/main/discordlogo.png?raw=true" alt="Discord Logo" style="width: 115px; height: auto; margin-bottom: 8px; margin-left: 5px;" />
                     <div style="display: flex; align-items: center; position: relative;">
-                        <img id="discord-profile-image" src="https://avatars.akamai.steamstatic.com/cb56471b6bbb734d48054000ceaba827e2776cf3_full.jpg" alt="Discord Profile Image" style="width: 80px; height: 80px; border: solid 3px #CCCCCC; border-radius: 50%; margin-left: 4px;" /> <!-- 15% 증가 -->
+                        <img id="discord-profile-image" src="https://avatars.akamai.steamstatic.com/cb56471b6bbb734d48054000ceaba827e2776cf3_full.jpg" alt="Discord Profile Image" style="width: 80px; height: 80px; border: solid 3px #CCCCCC; border-radius: 50%; margin-left: 4px;" />
                         <div id="discord-status-indicator" style="position: absolute; bottom: -4px; left: 60px; width: 21px; height: 21px; border-radius: 50%; background-color: gray; border: solid 5px #1F2127; z-index: 1;"></div>
                         <div style="color: white; margin-left: 11px;">
-                            <b id="discord-nickname" style="font-size: 30px;">HEAVEN</b> <!-- 15% 증가 -->
-                            <div id="discord-status" style="font-size: 25px; color: #CCCCCC;">확인 중...</div> <!-- 15% 증가 -->
+                            <b id="discord-nickname" style="font-size: 30px;">HEAVEN</b>
+                            <div id="discord-status" style="font-size: 25px; color: #CCCCCC;">확인 중...</div>
                         </div>
                     </div>
                 </div>
             </td>
         </tr>
+        <tr>
+            <!-- 구분선 추가 -->
+            <td colspan="2" style="border-top: solid 1px white; padding: 0;"></td>
+        </tr>
+        <tr>
+            <!-- 버튼 영역 -->
+            <td colspan="2" style="text-align: center; padding: 10px;">
+                <a href="https://discord.gg/9wcAJv5vPW" style="display: inline-block; background-color: #462456; color: white; text-decoration: none; padding: 15px 25px; border-radius: 10px; height: 50px; line-height: 50px; font-weight: bold; font-size: 20px; font-family: malgun gothic, Segoe UI, Helvetica, Arial, Sans-Serif;">
+                    디스코드 채팅 문의(클릭)
+                </a>
+            </td>
+        </tr>
     </tbody>
 </table>
-
 
 <script>
     async function fetchSteamStatus() {
@@ -73,7 +84,7 @@
                     case 1:
                         statusText = '온라인';
                         statusColor = '#6BCAF1';
-                        break; // break 추가
+                        break;
                     case 2:
                         statusText = '바쁨';
                         statusColor = '#6BCAF1';
@@ -108,7 +119,7 @@
 
         } catch (error) {
             console.error('Error fetching Steam status:', error);
-            document.getElementById('steam-status').innerText = '상태를 불러오지 못했습니다.';
+            document.getElementById('steam-status').innerText = '확인 실패';
         }
     }
 
@@ -135,10 +146,29 @@
 
         } catch (error) {
             console.error('Error fetching Discord status:', error);
-            document.getElementById('discord-status').innerText = '상태를 불러오지 못했습니다.';
+            document.getElementById('discord-status').innerText = '확인실패';
         }
     }
 
     fetchSteamStatus();
     fetchDiscordStatus();
 </script>
+
+<style>
+a {
+    display: inline-block;
+    background-color: purple; /* 기본 색상 */
+    color: white;
+    text-decoration: none;
+    padding: 15px 25px; /* 높이 조정 */
+    border-radius: 5px;
+    height: 50px;
+    line-height: 50px; /* 버튼 내부 텍스트 정렬 */
+    transition: background-color 0.3s;
+    font-weight: bold; /* 글씨 굵게 */
+}
+
+a:hover {
+    background-color: #6A1B9A; /* 마우스 오버 시 색상 변경 */
+}
+</style>
