@@ -16,12 +16,14 @@ async function getUserStatus(guildId, userId) {
     try {
         const guild = client.guilds.cache.get(guildId); // 서버(Guild) 가져오기
         if (!guild) {
-            throw new Error('Guild not found.');
+            console.error('Guild not found.');
+            return null;
         }
 
         const member = await guild.members.fetch(userId); // 서버 내의 사용자 정보 가져오기
         if (!member) {
-            throw new Error('User not found in guild.');
+            console.error('User not found in guild.');
+            return null;
         }
 
         const status = member.presence?.status || 'offline'; // 사용자의 상태 가져오기
@@ -37,8 +39,11 @@ export default async (req, res) => {
     const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
     const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
 
+    console.log('Received request to fetch user status');
+
     // 봇이 준비된 경우에만 요청을 처리
     if (!client.isReady()) {
+        console.log('Bot is not ready, returning 503');
         return res.status(503).json({ error: 'Bot is not ready' });
     }
 
@@ -47,6 +52,7 @@ export default async (req, res) => {
         if (status) {
             res.status(200).json({ status: status });
         } else {
+            console.log('User status not found, returning 404');
             res.status(404).json({ error: 'User not found or no presence information available' });
         }
     } catch (error) {
@@ -56,7 +62,7 @@ export default async (req, res) => {
 };
 
 // 봇 로그인 및 준비 완료 이벤트 처리
-client.login(process.env.DISCORD_TOKEN) // Vercel 환경변수에서 토큰 가져오기
+client.login(process.env.DISCORD_TOKEN)
     .then(() => {
         console.log('Bot is online!');
     })
