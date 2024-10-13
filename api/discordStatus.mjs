@@ -2,35 +2,37 @@
 
 import { Client, GatewayIntentBits } from 'discord.js';
 
-// Discord 봇 클라이언트 생성
 const client = new Client({ 
     intents: [ 
         GatewayIntentBits.Guilds, 
         GatewayIntentBits.GuildMembers, 
-        GatewayIntentBits.GuildPresences, // 사용자 상태 정보를 가져오기 위한 권한
+        GatewayIntentBits.GuildPresences,
     ] 
 });
 
-// 봇 준비 완료 시
-client.once('ready', () => {
-    console.log('Bot is online!');
-});
+// 봇 로그인 및 준비 완료
+client.login(process.env.DISCORD_TOKEN)
+    .then(() => {
+        console.log('Bot is online!');
+    })
+    .catch(err => {
+        console.error('Failed to login:', err);
+    });
 
 // 사용자 상태를 가져오는 함수
 async function getUserStatus(guildId, userId) {
     try {
-        const guild = client.guilds.cache.get(guildId); // 서버(Guild) 가져오기
+        const guild = client.guilds.cache.get(guildId);
         if (!guild) {
             throw new Error('Guild not found.');
         }
 
-        const member = await guild.members.fetch(userId); // 서버 내의 사용자 정보 가져오기
+        const member = await guild.members.fetch(userId);
         if (!member) {
             throw new Error('User not found in guild.');
         }
 
-        const status = member.presence?.status || 'offline'; // 사용자의 상태 가져오기
-        return status;
+        return member.presence?.status || 'offline';
     } catch (error) {
         console.error('Error fetching Discord presence:', error);
         return null;
@@ -48,7 +50,7 @@ export default async (req, res) => {
     }
 
     try {
-        const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
+        const status = await getUserStatus(guildId, userId);
         if (status) {
             res.status(200).json({ status: status });
         } else {
@@ -59,6 +61,3 @@ export default async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch user status' });
     }
 };
-
-// 봇 로그인
-client.login(process.env.DISCORD_TOKEN); // Vercel 환경변수에서 토큰 가져오기
