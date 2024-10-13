@@ -37,7 +37,11 @@ export default async (req, res) => {
     const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
     const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
 
-    // 사용자 상태 가져오기
+    // 봇이 준비 완료 후 사용자 상태를 가져옵니다.
+    if (!client.isReady()) {
+        return res.status(503).json({ error: 'Bot is not ready' }); // 봇이 준비되지 않은 경우
+    }
+
     try {
         const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
         if (status) {
@@ -55,11 +59,11 @@ export default async (req, res) => {
 client.login(process.env.DISCORD_TOKEN) // Vercel 환경변수에서 토큰 가져오기
     .then(() => {
         console.log('Bot is online!');
-        // 봇 준비 완료 후 상태 요청을 위한 서버 핸들러 등록
-        client.once('ready', () => {
-            console.log('Bot is ready!');
-        });
     })
     .catch(err => {
         console.error('Failed to login:', err);
     });
+
+client.once('ready', () => {
+    console.log('Bot is ready!');
+});
