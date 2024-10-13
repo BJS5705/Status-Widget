@@ -29,6 +29,7 @@ async function getUserStatus(guildId, userId) {
         }
 
         const status = member.presence?.status || 'offline'; // 사용자의 상태 가져오기
+        console.log(`User status retrieved: ${status}`); // 상태 정보 로그
         return status;
     } catch (error) {
         console.error('Error fetching Discord presence:', error);
@@ -61,6 +62,7 @@ export default async (req, res) => {
     try {
         const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
         if (status) {
+            console.log(`Returning user status: ${status}`); // 상태 반환 로그
             res.status(200).json({ status: status });
         } else {
             console.log('User status not found, returning 404');
