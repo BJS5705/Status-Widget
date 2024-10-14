@@ -45,12 +45,12 @@ export default async (req, res) => {
     console.log('Received request to fetch user status');
 
     // 봇이 준비되지 않은 경우 대기하고 최대 시도 횟수를 설정
-    const maxAttempts = 5;
+    const maxAttempts = 20;
     let attempts = 0;
 
     while (!botReady && attempts < maxAttempts) {
-        console.log('Bot is not ready, waiting for 1 second...');
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
+        console.log('Bot is not ready, waiting for 0.4 second...');
+        await new Promise(resolve => setTimeout(resolve, 400)); // 0.4초 대기
         attempts++;
     }
 
