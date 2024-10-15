@@ -1,7 +1,7 @@
 // api/discordStatus.mjs
 import { Client, GatewayIntentBits } from 'discord.js';
 
-// 봇 클라이언트 생성 (로컬에서 실행 중인 봇을 활용)
+// 로컬에서 실행 중인 봇의 Client를 직접 가져와서 사용해야 해.
 const client = new Client({ 
     intents: [ 
         GatewayIntentBits.Guilds, 
@@ -10,36 +10,19 @@ const client = new Client({
     ] 
 });
 
-let botReady = false;
-
-// 봇 준비 완료 이벤트 처리
-client.once('ready', () => {
-    console.log('Bot is ready!');
-    botReady = true;
-});
-
 // Vercel의 API 핸들러
 export default async (req, res) => {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const guildId = '1192087206219763753';
-    const userId = '332383283470139393';
+    const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
+    const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
 
-    // 봇이 준비될 때까지 대기
-    const maxAttempts = 20;
-    let attempts = 0;
-
-    while (!botReady && attempts < maxAttempts) {
-        console.log('Waiting for bot to be ready...');
-        await new Promise(resolve => setTimeout(resolve, 500)); // 0.5초 대기
-        attempts++;
-    }
-
-    if (!botReady) {
-        console.log('Bot is still not ready after attempts, returning 503');
-        return res.status(503).json({ error: 'Bot is not ready' });
+    // 봇이 로그인되어 있어야만 사용자 상태를 확인할 수 있어
+    if (!client.user) {
+        console.log('Bot is not logged in, returning 503');
+        return res.status(503).json({ error: 'Bot is not logged in' });
     }
 
     try {
