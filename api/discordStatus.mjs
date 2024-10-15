@@ -9,28 +9,26 @@ let botReady = false; // 봇 준비 상태를 추적하는 변수
 
 // 사용자 상태를 가져오는 함수
 async function getUserStatus(guildId, userId) {
-    // 클라이언트가 null이거나 준비되지 않은 경우 처리
     if (!client || !botReady) {
         console.error('Client is not initialized or bot is not ready.');
         return null;
     }
 
     try {
-        const guild = client.guilds.cache.get(guildId); // 서버(Guild) 가져오기
+        const guild = client.guilds.cache.get(guildId);
         if (!guild) {
             console.error('Guild not found.');
             return null;
         }
 
-        // force: true로 캐시를 무시하고 항상 실시간으로 상태를 가져옴
         const member = await guild.members.fetch({ user: userId, force: true });
         if (!member) {
             console.error('User not found in guild.');
             return null;
         }
 
-        const status = member.presence?.status || 'offline'; // 사용자의 상태 가져오기
-        console.log(`User status retrieved: ${status}`); // 상태 정보 로그
+        const status = member.presence?.status || 'offline';
+        console.log(`User status retrieved: ${status}`);
         return status;
     } catch (error) {
         console.error('Error fetching Discord presence:', error);
@@ -40,18 +38,17 @@ async function getUserStatus(guildId, userId) {
 
 // Express.js 요청 처리
 export default async (req, res) => {
-    const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
-    const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
+    const guildId = '1192087206219763753';
+    const userId = '332383283470139393';
 
     console.log('Received request to fetch user status');
 
-    // 봇이 준비되지 않은 경우 대기하고 최대 시도 횟수를 설정
-    const maxAttempts = 20;
+    const maxAttempts = 30; // 시도 횟수 증가
     let attempts = 0;
 
     while (!botReady && attempts < maxAttempts) {
-        console.log('Bot is not ready, waiting for 0.4 second...');
-        await new Promise(resolve => setTimeout(resolve, 400)); // 0.4초 대기
+        console.log('Bot is not ready, waiting for 0.5 second...'); // 대기 시간 증가
+        await new Promise(resolve => setTimeout(resolve, 500));
         attempts++;
     }
 
@@ -61,12 +58,11 @@ export default async (req, res) => {
     }
 
     try {
-        const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
+        const status = await getUserStatus(guildId, userId);
         if (status) {
-            console.log(`Returning user status: ${status}`); // 상태 반환 로그
+            console.log(`Returning user status: ${status}`);
             res.status(200).json({ status: status });
 
-            // 로그아웃 및 클라이언트 종료
             console.log('Bot is logging out...');
             await client.destroy(); // 클라이언트 종료
             client = null; // 클라이언트 초기화
