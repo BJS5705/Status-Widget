@@ -2,18 +2,9 @@
 
 import { Client, GatewayIntentBits } from 'discord.js';
 
-// Discord 봇 클라이언트 생성
-const client = new Client({ 
-    intents: [ 
-        GatewayIntentBits.Guilds, 
-        GatewayIntentBits.GuildMembers, 
-        GatewayIntentBits.GuildPresences,
-    ] 
-});
+let client;
 
-let botReady = false; // 봇 준비 상태를 추적하는 변수
-
-// 사용자 상태를 가져오는 함수
+// 봇의 클라이언트를 생성하지 않고, 이미 실행 중인 클라이언트를 사용하도록 수정
 async function getUserStatus(guildId, userId) {
     try {
         const guild = client.guilds.cache.get(guildId); // 서버(Guild) 가져오기
@@ -44,21 +35,6 @@ export default async (req, res) => {
 
     console.log('Received request to fetch user status');
 
-    // 봇이 준비되지 않은 경우 대기하고 최대 시도 횟수를 설정
-    const maxAttempts = 20;
-    let attempts = 0;
-
-    while (!botReady && attempts < maxAttempts) {
-        console.log('Bot is not ready, waiting for 0.4 second...');
-        await new Promise(resolve => setTimeout(resolve, 400)); // 0.4초 대기
-        attempts++;
-    }
-
-    if (!botReady) {
-        console.log('Bot is still not ready after attempts, returning 503');
-        return res.status(503).json({ error: 'Bot is not ready' });
-    }
-
     try {
         const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
         if (status) {
@@ -75,6 +51,15 @@ export default async (req, res) => {
 };
 
 // 봇 로그인 및 준비 완료 이벤트 처리
+client = new Client({ 
+    intents: [ 
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMembers, 
+        GatewayIntentBits.GuildPresences,
+    ] 
+});
+
+// 봇 로그인
 client.login(process.env.DISCORD_TOKEN)
     .then(() => {
         console.log('Bot is online!');
@@ -85,5 +70,4 @@ client.login(process.env.DISCORD_TOKEN)
 
 client.once('ready', () => {
     console.log('Bot is ready!');
-    botReady = true; // 봇이 준비 상태로 변경
 });
