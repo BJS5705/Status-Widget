@@ -38,16 +38,16 @@ async function getUserStatus(guildId, userId) {
 
 // Express.js 요청 처리
 export default async (req, res) => {
-    const guildId = '1192087206219763753';
-    const userId = '332383283470139393';
+    const guildId = '1192087206219763753'; // Discord 서버 ID
+    const userId = '332383283470139393'; // Discord 사용자 ID
 
     console.log('Received request to fetch user status');
 
-    const maxAttempts = 30; // 시도 횟수 증가
+    const maxAttempts = 30; // 시도 횟수
     let attempts = 0;
 
     while (!botReady && attempts < maxAttempts) {
-        console.log('Bot is not ready, waiting for 0.5 second...'); // 대기 시간 증가
+        console.log('Bot is not ready, waiting for 0.5 second...'); // 대기
         await new Promise(resolve => setTimeout(resolve, 500));
         attempts++;
     }
@@ -58,7 +58,7 @@ export default async (req, res) => {
     }
 
     try {
-        const status = await getUserStatus(guildId, userId);
+        const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
         if (status) {
             console.log(`Returning user status: ${status}`);
             res.status(200).json({ status: status });
@@ -100,4 +100,4 @@ async function loginBot() {
 }
 
 // 로그인 시도
-loginBot();
+await loginBot(); // 클라이언트 초기화 후 API 요청이 가능하도록 수정
