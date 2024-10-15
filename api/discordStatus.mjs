@@ -1,6 +1,7 @@
 // api/discordStatus.mjs
 import { Client, GatewayIntentBits } from 'discord.js';
 
+// 봇 클라이언트 생성 (로컬에서 실행 중인 봇을 활용)
 const client = new Client({ 
     intents: [ 
         GatewayIntentBits.Guilds, 
@@ -11,14 +12,7 @@ const client = new Client({
 
 let botReady = false;
 
-client.login(process.env.DISCORD_TOKEN)
-    .then(() => {
-        console.log('Bot is online!');
-    })
-    .catch(err => {
-        console.error('Failed to login:', err);
-    });
-
+// 봇 준비 완료 이벤트 처리
 client.once('ready', () => {
     console.log('Bot is ready!');
     botReady = true;
