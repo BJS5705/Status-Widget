@@ -22,7 +22,8 @@ async function getUserStatus(guildId, userId) {
             return null;
         }
 
-        const member = await guild.members.fetch(userId); // 서버 내의 사용자 정보 가져오기
+        // force: true로 캐시를 무시하고 항상 실시간으로 상태를 가져옴
+        const member = await guild.members.fetch({ user: userId, force: true });
         if (!member) {
             console.error('User not found in guild.');
             return null;
