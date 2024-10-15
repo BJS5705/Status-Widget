@@ -33,7 +33,18 @@ export default async (req, res) => {
     const guildId = '1192087206219763753';
     const userId = '332383283470139393';
 
+    // 봇이 준비될 때까지 대기
+    const maxAttempts = 20;
+    let attempts = 0;
+
+    while (!botReady && attempts < maxAttempts) {
+        console.log('Waiting for bot to be ready...');
+        await new Promise(resolve => setTimeout(resolve, 500)); // 0.5초 대기
+        attempts++;
+    }
+
     if (!botReady) {
+        console.log('Bot is still not ready after attempts, returning 503');
         return res.status(503).json({ error: 'Bot is not ready' });
     }
 
