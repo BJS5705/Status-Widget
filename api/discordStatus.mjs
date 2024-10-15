@@ -7,13 +7,20 @@ let client;
 // 봇의 클라이언트를 생성하지 않고, 이미 실행 중인 클라이언트를 사용하도록 수정
 async function getUserStatus(guildId, userId) {
     try {
-        const guild = client.guilds.cache.get(guildId); // 서버(Guild) 가져오기
+        // 클라이언트가 준비되었는지 확인
+        if (!client.isReady()) {
+            throw new Error('Client is not ready.');
+        }
+
+        // 서버(Guild) 가져오기
+        const guild = await client.guilds.fetch(guildId); // fetch로 서버 정보를 가져옴
         if (!guild) {
             console.error('Guild not found.');
             return null;
         }
 
-        const member = await guild.members.fetch(userId); // 서버 내의 사용자 정보 가져오기
+        // 서버 내의 사용자 정보 가져오기
+        const member = await guild.members.fetch(userId); 
         if (!member) {
             console.error('User not found in guild.');
             return null;
