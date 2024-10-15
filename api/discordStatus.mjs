@@ -9,6 +9,12 @@ let botReady = false; // 봇 준비 상태를 추적하는 변수
 
 // 사용자 상태를 가져오는 함수
 async function getUserStatus(guildId, userId) {
+    // 클라이언트가 null이거나 준비되지 않은 경우 처리
+    if (!client || !botReady) {
+        console.error('Client is not initialized or bot is not ready.');
+        return null;
+    }
+
     try {
         const guild = client.guilds.cache.get(guildId); // 서버(Guild) 가져오기
         if (!guild) {
@@ -61,8 +67,8 @@ export default async (req, res) => {
             res.status(200).json({ status: status });
 
             // 로그아웃 및 클라이언트 종료
-            await client.destroy(); // 클라이언트 종료
             console.log('Bot is logging out...');
+            await client.destroy(); // 클라이언트 종료
             client = null; // 클라이언트 초기화
         } else {
             console.log('User status not found, returning 404');
