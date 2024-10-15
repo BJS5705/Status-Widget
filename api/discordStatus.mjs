@@ -39,15 +39,14 @@ async function getUserStatus(guildId, userId) {
 
 // Express.js 요청 처리
 export default async (req, res) => {
-    const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
-    const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
+    const { guildId, userId } = req.query; // 요청에서 서버와 사용자 ID 동적 처리
 
     console.log('Received request to fetch user status');
 
-    // 봇이 준비되지 않은 경우 대기하고 최대 시도 횟수를 설정
     const maxAttempts = 20;
     let attempts = 0;
 
+    // 봇이 준비되지 않은 경우 대기
     while (!botReady && attempts < maxAttempts) {
         console.log('Bot is not ready, waiting for 0.4 second...');
         await new Promise(resolve => setTimeout(resolve, 400)); // 0.4초 대기
