@@ -29,6 +29,9 @@ async function getUserStatus(guildId, userId) {
             return null;
         }
 
+        // 사용자 상태를 최신 상태로 업데이트
+        await member.presence?.update(); // presence 업데이트 요청
+
         const status = member.presence?.status || 'offline'; // 사용자의 상태 가져오기
         console.log(`User status retrieved: ${status}`); // 상태 정보 로그
         return status;
