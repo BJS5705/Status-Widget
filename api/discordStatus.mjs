@@ -53,7 +53,6 @@ app.get('/status', async (req, res) => {
     }
 });
 
-// Vercel의 요구 사항에 맞춰 포트를 설정
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
