@@ -3,13 +3,7 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 
 // Discord 봇 클라이언트 생성
-const client = new Client({ 
-    intents: [ 
-        GatewayIntentBits.Guilds, 
-        GatewayIntentBits.GuildMembers, 
-        GatewayIntentBits.GuildPresences,
-    ] 
-});
+let client; // 클라이언트를 전역 변수로 선언
 
 let botReady = false; // 봇 준비 상태를 추적하는 변수
 
@@ -36,12 +30,6 @@ async function getUserStatus(guildId, userId) {
         console.error('Error fetching Discord presence:', error);
         return null;
     }
-}
-
-// 봇 로그아웃 함수
-async function logoutBot() {
-    await client.destroy(); // 클라이언트 종료
-    console.log('Bot has been logged out and client destroyed.');
 }
 
 // Express.js 요청 처리
@@ -71,6 +59,11 @@ export default async (req, res) => {
         if (status) {
             console.log(`Returning user status: ${status}`); // 상태 반환 로그
             res.status(200).json({ status: status });
+
+            // 로그아웃 및 클라이언트 종료
+            await client.destroy(); // 클라이언트 종료
+            console.log('Bot is logging out...');
+            client = null; // 클라이언트 초기화
         } else {
             console.log('User status not found, returning 404');
             res.status(404).json({ error: 'User not found or no presence information available' });
@@ -82,56 +75,27 @@ export default async (req, res) => {
 };
 
 // 봇 로그인 및 준비 완료 이벤트 처리
-client.login(process.env.DISCORD_TOKEN)
-    .then(() => {
-        console.log('Bot is online!');
-    })
-    .catch(err => {
-        console.error('Failed to login:', err);
+async function loginBot() {
+    client = new Client({ 
+        intents: [ 
+            GatewayIntentBits.Guilds, 
+            GatewayIntentBits.GuildMembers, 
+            GatewayIntentBits.GuildPresences,
+        ] 
     });
 
-client.once('ready', () => {
-    console.log('Bot is ready!');
-    botReady = true; // 봇이 준비 상태로 변경
-});
-
-// 봇 로그아웃 및 상태 확인 함수
-async function checkAndLogoutBot() {
     try {
-        const userStatus = await getUserStatus('1192087206219763753', '332383283470139393');
+        await client.login(process.env.DISCORD_TOKEN);
+        console.log('Bot is online!');
 
-        if (userStatus !== 'offline') {
-            console.log('User is still online. Attempting to logout again...');
-            await logoutBot();
-            // 다시 로그아웃 후 확인
-            const maxRetryAttempts = 5; // 최대 재시도 횟수
-            let retryAttempts = 0;
-
-            while (retryAttempts < maxRetryAttempts) {
-                console.log('Checking user status after logout attempt...');
-                const statusAfterLogout = await getUserStatus('1192087206219763753', '332383283470139393');
-                
-                if (statusAfterLogout === 'offline') {
-                    console.log('Successfully logged out and user is offline.');
-                    break; // 로그아웃 성공
-                } else {
-                    console.log('User is still online, retrying...');
-                    await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
-                    retryAttempts++;
-                }
-            }
-
-            if (retryAttempts === maxRetryAttempts) {
-                console.log('Failed to confirm logout after multiple attempts.');
-            }
-        } else {
-            console.log('User is already offline.');
-            await logoutBot();
-        }
-    } catch (error) {
-        console.error('Error during logout check:', error);
+        client.once('ready', () => {
+            console.log('Bot is ready!');
+            botReady = true; // 봇이 준비 상태로 변경
+        });
+    } catch (err) {
+        console.error('Failed to login:', err);
     }
 }
 
-// 로그아웃 확인 호출 (API 요청 처리 이후에 사용)
-checkAndLogoutBot();
+// 로그인 시도
+loginBot();
