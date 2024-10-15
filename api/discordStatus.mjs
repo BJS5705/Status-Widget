@@ -2,25 +2,36 @@
 
 import { Client, GatewayIntentBits } from 'discord.js';
 
-let client;
+const client = new Client({ 
+    intents: [ 
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMembers, 
+        GatewayIntentBits.GuildPresences,
+    ] 
+});
 
-// 봇의 클라이언트를 생성하지 않고, 이미 실행 중인 클라이언트를 사용하도록 수정
+let botReady = false; // 봇 준비 상태를 추적하는 변수
+
+// 봇이 준비되었을 때 실행
+client.once('ready', () => {
+    console.log(`Logged in as ${client.user.tag}!`);
+    botReady = true; // 봇이 준비 상태로 변경
+});
+
+// 사용자 상태를 가져오는 함수
 async function getUserStatus(guildId, userId) {
-    try {
-        // 클라이언트가 준비되었는지 확인
-        if (!client.isReady()) {
-            throw new Error('Client is not ready.');
-        }
+    if (!botReady) {
+        throw new Error('Client is not ready.');
+    }
 
-        // 서버(Guild) 가져오기
-        const guild = await client.guilds.fetch(guildId); // fetch로 서버 정보를 가져옴
+    try {
+        const guild = await client.guilds.fetch(guildId); // 서버(Guild) 가져오기
         if (!guild) {
             console.error('Guild not found.');
             return null;
         }
 
-        // 서버 내의 사용자 정보 가져오기
-        const member = await guild.members.fetch(userId); 
+        const member = await guild.members.fetch(userId); // 서버 내의 사용자 정보 가져오기
         if (!member) {
             console.error('User not found in guild.');
             return null;
@@ -53,28 +64,9 @@ export default async (req, res) => {
         }
     } catch (error) {
         console.error('Error fetching user status:', error);
-        res.status(500).json({ error: 'Failed to fetch user status' });
+        res.status(500).json({ error: error.message }); // 클라이언트가 준비되지 않은 경우 메시지 반환
     }
 };
 
-// 봇 로그인 및 준비 완료 이벤트 처리
-client = new Client({ 
-    intents: [ 
-        GatewayIntentBits.Guilds, 
-        GatewayIntentBits.GuildMembers, 
-        GatewayIntentBits.GuildPresences,
-    ] 
-});
-
 // 봇 로그인
-client.login(process.env.DISCORD_TOKEN)
-    .then(() => {
-        console.log('Bot is online!');
-    })
-    .catch(err => {
-        console.error('Failed to login:', err);
-    });
-
-client.once('ready', () => {
-    console.log('Bot is ready!');
-});
+client.login(process.env.DISCORD_TOKEN);
