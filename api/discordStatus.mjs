@@ -1,7 +1,7 @@
 // api/discordStatus.mjs
 import { Client, GatewayIntentBits } from 'discord.js';
 
-// 로컬에서 실행 중인 봇의 Client를 직접 가져와서 사용해야 해.
+// Client를 초기화
 const client = new Client({ 
     intents: [ 
         GatewayIntentBits.Guilds, 
@@ -9,6 +9,19 @@ const client = new Client({
         GatewayIntentBits.GuildPresences 
     ] 
 });
+
+// 로컬에서 봇을 실행 중인 경우, 클라이언트가 로그인되어 있다고 가정
+let botReady = false;
+
+// 로그인 시 봇 준비 상태 변경
+client.login(process.env.DISCORD_TOKEN)
+    .then(() => {
+        console.log('Bot is online!');
+        botReady = true; // 로그인 성공 시 준비 상태 변경
+    })
+    .catch(err => {
+        console.error('Failed to login:', err);
+    });
 
 // Vercel의 API 핸들러
 export default async (req, res) => {
@@ -19,8 +32,7 @@ export default async (req, res) => {
     const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
     const userId = '332383283470139393'; // 확인할 Discord 사용자 ID
 
-    // 봇이 로그인되어 있어야만 사용자 상태를 확인할 수 있어
-    if (!client.user) {
+    if (!botReady) {
         console.log('Bot is not logged in, returning 503');
         return res.status(503).json({ error: 'Bot is not logged in' });
     }
