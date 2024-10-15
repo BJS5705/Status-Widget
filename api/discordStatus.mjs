@@ -38,6 +38,12 @@ async function getUserStatus(guildId, userId) {
     }
 }
 
+// 봇 로그아웃 함수
+async function logoutBot() {
+    await client.destroy(); // 클라이언트 종료
+    console.log('Bot has been logged out and client destroyed.');
+}
+
 // Express.js 요청 처리
 export default async (req, res) => {
     const guildId = '1192087206219763753'; // 확인할 Discord 서버 ID
@@ -88,3 +94,44 @@ client.once('ready', () => {
     console.log('Bot is ready!');
     botReady = true; // 봇이 준비 상태로 변경
 });
+
+// 봇 로그아웃 및 상태 확인 함수
+async function checkAndLogoutBot() {
+    try {
+        const userStatus = await getUserStatus('1192087206219763753', '332383283470139393');
+
+        if (userStatus !== 'offline') {
+            console.log('User is still online. Attempting to logout again...');
+            await logoutBot();
+            // 다시 로그아웃 후 확인
+            const maxRetryAttempts = 5; // 최대 재시도 횟수
+            let retryAttempts = 0;
+
+            while (retryAttempts < maxRetryAttempts) {
+                console.log('Checking user status after logout attempt...');
+                const statusAfterLogout = await getUserStatus('1192087206219763753', '332383283470139393');
+                
+                if (statusAfterLogout === 'offline') {
+                    console.log('Successfully logged out and user is offline.');
+                    break; // 로그아웃 성공
+                } else {
+                    console.log('User is still online, retrying...');
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
+                    retryAttempts++;
+                }
+            }
+
+            if (retryAttempts === maxRetryAttempts) {
+                console.log('Failed to confirm logout after multiple attempts.');
+            }
+        } else {
+            console.log('User is already offline.');
+            await logoutBot();
+        }
+    } catch (error) {
+        console.error('Error during logout check:', error);
+    }
+}
+
+// 로그아웃 확인 호출 (API 요청 처리 이후에 사용)
+checkAndLogoutBot();
