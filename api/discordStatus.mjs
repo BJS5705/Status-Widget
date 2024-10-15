@@ -53,6 +53,11 @@ export default async (req, res) => {
 
     console.log('Received request to fetch user status');
 
+    if (!botReady) {
+        console.log('Bot is not ready, returning 503');
+        return res.status(503).json({ error: 'Bot is not ready' });
+    }
+
     try {
         const status = await getUserStatus(guildId, userId); // 사용자 상태 가져오기
         if (status) {
@@ -64,7 +69,7 @@ export default async (req, res) => {
         }
     } catch (error) {
         console.error('Error fetching user status:', error);
-        res.status(500).json({ error: error.message }); // 클라이언트가 준비되지 않은 경우 메시지 반환
+        res.status(500).json({ error: error.message }); // 오류 메시지 반환
     }
 };
 
