@@ -4,7 +4,6 @@ import { Client, GatewayIntentBits } from 'discord.js';
 
 // Discord 봇 클라이언트 생성
 let client; // 클라이언트를 전역 변수로 선언
-
 let botReady = false; // 봇 준비 상태를 추적하는 변수
 
 // 사용자 상태를 가져오는 함수
@@ -43,12 +42,13 @@ export default async (req, res) => {
 
     console.log('Received request to fetch user status');
 
-    const maxAttempts = 30; // 시도 횟수
+    // 봇이 준비되지 않은 경우 대기하고 최대 시도 횟수를 설정
+    const maxAttempts = 30; // 최대 시도 횟수
     let attempts = 0;
 
     while (!botReady && attempts < maxAttempts) {
-        console.log('Bot is not ready, waiting for 0.5 second...'); // 대기
-        await new Promise(resolve => setTimeout(resolve, 500));
+        console.log('Bot is not ready, waiting for 0.5 second...');
+        await new Promise(resolve => setTimeout(resolve, 500)); // 0.5초 대기
         attempts++;
     }
 
@@ -63,9 +63,11 @@ export default async (req, res) => {
             console.log(`Returning user status: ${status}`);
             res.status(200).json({ status: status });
 
+            // 상태 응답을 받은 후 클라이언트를 종료
             console.log('Bot is logging out...');
             await client.destroy(); // 클라이언트 종료
             client = null; // 클라이언트 초기화
+            botReady = false; // 봇 상태를 다시 초기화
         } else {
             console.log('User status not found, returning 404');
             res.status(404).json({ error: 'User not found or no presence information available' });
@@ -99,5 +101,5 @@ async function loginBot() {
     }
 }
 
-// 로그인 시도
-await loginBot(); // 클라이언트 초기화 후 API 요청이 가능하도록 수정
+// 클라이언트 로그인 시도
+await loginBot(); // 클라이언트를 초기화하고 로그인합니다.
