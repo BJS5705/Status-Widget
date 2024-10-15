@@ -1,8 +1,6 @@
 // api/discordStatus.mjs
-import express from 'express';
 import { Client, GatewayIntentBits } from 'discord.js';
 
-const app = express();
 const client = new Client({ 
     intents: [ 
         GatewayIntentBits.Guilds, 
@@ -26,7 +24,12 @@ client.once('ready', () => {
     botReady = true;
 });
 
-app.get('/status', async (req, res) => {
+// Vercel의 API 핸들러
+export default async (req, res) => {
+    if (req.method !== 'GET') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
     const guildId = '1192087206219763753';
     const userId = '332383283470139393';
 
@@ -51,10 +54,4 @@ app.get('/status', async (req, res) => {
         console.error('Error fetching user status:', error);
         res.status(500).json({ error: 'Failed to fetch user status' });
     }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
+};
