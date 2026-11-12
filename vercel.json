@@ -1,0 +1,8 @@
+{
+  "crons": [
+    { "path": "/api/afkKick", "schedule": "0 3 * * *" }
+  ],
+  "functions": {
+    "api/afkKick.mjs": { "maxDuration": 60 }
+  }
+}
