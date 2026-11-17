@@ -2,7 +2,7 @@
 
 import { REST, Routes, PermissionFlagsBits } from 'discord.js';
 
-const HOURS = 48;
+const HOURS = 18;
 const KICK_REASON = 'AFK';
 const GUILD_ID = process.env.GUILD_ID || '1192087206219763753';
 
